@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+
+  <!-- Header-->
+  <header class="bg-dark py-5" >
+    <div class="container px-2 px-lg-2 my-2">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder" style="background-color: cadetblue;">Categories</h1>
+            <p class="lead fw-normal text-white-50 mb-0" style="background-color: darkcyan;">
+                Choose Your Category Below...
+                 
+            </p>
+        </div>
+    </div>
+</header>
+<div class="container" >
+    <div class="row">
+        <center>
+            <div class="col-8">
+                <br><br><br>
+                {% for category in categories %}
+
+                  <h3><a href="{% url 'category' category %}">{{ category }}</a></h3>
+                {% endfor %}
+
+<br>
+<br>
+<br><br>
+<br>
+<br>
+<br>
+                <br>
+                <br><br>
+                <br>
+
+                               
+            </div>
+        </center>
+    </div>
+</div>
+
+
+{% endblock %} 

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f8f8;
+            font-weight: bold;
+        }
+        tr:hover {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Order List</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Product</th>
+                <th>Customer</th>
+                <th>Quantity</th>
+                <th>Address</th>
+                <th>Phone</th>
+                <th>Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.order_id }}</td>
+                <td>{{ order.product.name }}</td>
+                
+                <td>{{ order.quantity }}</td>
+                <td>{{ order.address }}</td>
+                <td>{{ order.phone }}</td>
+                <td>{{ order.date }}</td>
+                <td>{{ order.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+
+<h1>Order Details</h1>
+{% for order in orders %}
+    <p>Order ID: {{ order.order_id }}</p>
+    <p>Product: {{ order.product.name }}</p>
+    <p>Quantity: {{ order.quantity }}</p>
+    <p>Address: {{ order.address }}</p>
+{% endfor %}
+    {% endblock %}

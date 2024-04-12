@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<head>
+    <title>Address Form</title>
+</head>
+<body style="background-color: darkcyan;">
+    <h1>Address Form</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+{% endblock %} 
