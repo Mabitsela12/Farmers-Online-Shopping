@@ -1,0 +1,311 @@
+{% extends 'base.html' %}
+
+{% block content %}
+        <!-- Header-->
+        <header class="bg-dark py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="text-center text-white">
+                    <h1 class="display-4 fw-bolder" style="background-color: darkcyan;">Shopping Cart</h1>
+                    <p class="lead fw-normal text-white-50 mb-0" style="background-color: cadetblue;">View Your Cart</p>
+                </div>
+            </div>
+        </header>
+        <br>
+        <div class="container" style="background-color: darkcyan;">
+         {% if cart_products %}
+            {% for product in cart_products %}
+            <div class="card mb-3" style="max-width: 1000px;">
+                <div class="row g-0">
+                  <div class="col-md-4">
+                    <img src="{{ product.image.url }}" class="img-fluid rounded-start" alt="...">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="card-body">
+                      <center>
+                      <h5 class="card-title">{{ product.name}}</h5>
+                      <br>
+                      <p class="card-text justified">{{ product.description}}</p>
+        
+                      {% if product.is_sale%}
+        
+                         <div class="d-flex
+                           justify-content-center
+                           small text-warning mb-2">
+                           <div class="bi-star-fill"></div>
+                           &nbsp;&nbsp;Sale!&nbsp;&nbsp;
+                           <div class="bi-star-fill"></div>
+        
+                         </div>
+        
+        
+        
+                          <!-- Product price-->
+                          <strike> R{{product.price}}
+                          </strike>
+                          &nbsp;
+                          R{{product.sale_price}}
+        
+                      {% else %}
+                         R{{ product.price}}
+                         
+        
+                      {% endif %}
+                      <br><br>
+                      <div class="row justify-content-center">
+                        <div class="col-md-2">
+                          Quantity:
+                        </div>
+                        <div class="col-md-2">
+                          <select class="form-select form-select-sm" id="select{{product.id}}">
+
+                            {% with product_id=product.id|slugify %}
+                               {% for key, value in quantities.items %}
+                                    {% if key == product_id %}
+                                         <option selected>{{ value }}</option>
+                                    {% endif %}
+                               {% endfor %}
+                            {% endwith %}
+
+                           
+                            
+                           <!-- {% for key, value in quantities.items%}
+                               {% if key == 'product_id|slugify' %}
+                                 <option selected>{{ value }}</option>
+                               {% endif %}
+                            {% endfor %}-->
+                            
+                          
+                            
+                            
+                            <!--<a class="minus-cart btn" pid="{{item.product.id}}"><i class="fas fa-minus-square fa-lg"></i></a>
+                            <span id="quantity">{{item.quantity}}</span>
+                            <a class="plus-cart btn" pid="{{item.product.id}}"><i class="fas fa-plus-square fa-lg"></i></a>-->
+                            
+                        
+                           <option value="1">1</option>
+                           <option value="2">2</option>
+                           <option value="3">3</option>
+                           <option value="4">4</option>
+                           <option value="5">5</option>
+                         </select>
+                      
+        
+                        </div>
+                        <br><br>
+                      <center>
+                        <a href="{% url 'home' %}" class="btn btn-secondary">
+                          Home</a>
+                        <button type="button" data-index="{{product.id}}" class="btn btn-secondary update-cart">
+                          Update</button>
+                          <button type="button" data-index="{{product.id}}" class="btn btn-danger delete-product">
+                            Remove</button>
+                      </center>
+                      
+                    </center>
+                    
+                    </div>
+                  </div>
+                </div>
+            </div>
+        <br>
+        
+            {% endfor %}
+            <h3>Total: R{{ totals }}</h3>
+            <br><br>
+            <!-- Address Option -->
+<div class="container">
+  <h2>Shipping Address</h2>
+  <div class="form-check">
+      <input class="form-check-input" type="checkbox" id="addressCheckbox">
+      <label class="form-check-label" for="addressCheckbox">
+          Add shipping address
+      </label>
+  </div>
+
+  <!-- Address Form (Hidden by Default) -->
+  <form id="address-form" style="display: none;">
+      <!-- Input fields for address -->
+      <div class="mb-3">
+          <label for="inputAddress" class="form-label">Address</label>
+          <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+      </div>
+      <div class="mb-3">
+          <label for="inputAddress2" class="form-label">Address 2</label>
+          <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
+      </div>
+      <div class="row">
+          <div class="col-md-6 mb-3">
+              <label for="inputCity" class="form-label">City</label>
+              <input type="text" class="form-control" id="inputCity">
+          </div>
+          <div class="col-md-4 mb-3">
+              <label for="inputState" class="form-label">State</label>
+              <select id="inputState" class="form-select">
+                  <option selected>Choose...</option>
+                  <option>...</option>
+              </select>
+          </div>
+          <div class="col-md-2 mb-3">
+              <label for="inputZip" class="form-label">Zip</label>
+              <input type="text" class="form-control" id="inputZip">
+          </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+
+<!-- JavaScript to toggle address form visibility and calculate total -->
+<script>
+  $(document).ready(function () {
+      // Define shipping fees
+      var feeLessThan20km = 15;
+      var feeMoreThan20km = 25;
+
+      $('#addressCheckbox').change(function () {
+          if (this.checked) {
+              $('#address-form').show();
+              calculateTotal();
+          } else {
+              $('#address-form').hide();
+          }
+      });
+
+      // Function to calculate total amount
+      function calculateTotal() {
+          // Simulate getting distance from Google Maps Distance Matrix API
+          var distance = 25; // Example distance in kilometers
+          var shippingFee;
+
+          if (distance <= 20) {
+              shippingFee = feeLessThan20km;
+          } else {
+              shippingFee = feeMoreThan20km;
+          }
+
+          var total = parseFloat('{{ totals }}'); // Get the initial total from the server-side
+          total += shippingFee;
+
+          // Update the total display
+          $('#totalAmount').text(total.toFixed(2)); // Update the total amount display
+      }
+  });
+</script>
+
+
+<br><br>
+            <div id="paypal-button-container"></div>
+
+
+<script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
+
+<script>
+	paypal.Buttons({
+		createOrder: function(data, actions) {
+			return (actions.order.create)({
+				purchase_units: [{
+				amount: {
+				value: '{{ totals }}'
+				}
+      }]
+			});
+		},
+		
+		onApprove: function(data, actions){
+            return actions.order.capture().then(function(details){
+                var firstName = '{{ request.user.first_name }}';
+                var lastName = '{{ request.user.last_name }}';
+                var fullName = firstName + ' ' + lastName;
+
+                //alert('Transaction completed by ' + fullName);
+                // Redirect to the payment success page
+                window.location.href = "{% url 'payment_success' %}";   
+            });
+  }
+  }).render('#paypal-button-container');
+
+</script>
+
+ <br>
+            {% else %}
+              <center>Your Cart is empty...</center>
+<br>
+
+</script>
+
+<br>  
+<br>
+<br> 
+<br>
+<br>
+<br>
+<br>
+         {% endif %}
+</div>
+  
+  <script>
+   //update cart
+
+    $(document).on('click','.update-cart', function(e)
+    {
+      e.preventDefault();
+      //grab the product id
+      var productid= $(this).data('index');
+
+      $.ajax({
+      type: 'POST',
+      url:"{% url 'cart_update' %}",
+      data: 
+      {
+        product_id: $(this).data('index'),
+        product_qty:$('#select' + productid + ' option:selected').text(),
+        csrfmiddlewaretoken:'{{csrf_token}}',
+        action:'post'
+      },
+
+      success: function(json)
+      {
+         // console.log(json)
+         //document.getElementById("cart_quantity").textContent=json.qty
+         location.reload();
+      },
+
+      error:function(xhr, errmsg, err){
+
+    }
+  });
+})
+
+//delete item from cart
+
+$(document).on('click','.delete-product', function(e)
+    {
+      e.preventDefault();
+      //grab the product id
+      //var productid= $(this).data('index');
+
+      $.ajax({
+      type: 'POST',
+      url:"{% url 'cart_delete' %}",
+      data: 
+      {
+        product_id: $(this).data('index'),
+        csrfmiddlewaretoken:'{{csrf_token}}',
+        action:'post'
+      },
+
+      success: function(json)
+      {
+         // console.log(json)
+         //document.getElementById("cart_quantity").textContent=json.qty
+         location.reload();
+      },
+
+      error:function(xhr, errmsg, err){
+
+    }
+  });
+})
+</script>
+
+
+{% endblock %}
